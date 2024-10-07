@@ -105,7 +105,3 @@ Connexions actives
   Proto  Adresse locale         Adresse distante       État
   TCP    10.1.1.1:30866         AM:9998                ESTABLISHED
 ```
-
-# Autres services
-
-Fonctionne pas... :(
