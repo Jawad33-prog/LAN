@@ -163,8 +163,8 @@ PING 10.5.1.11 (10.5.1.11) 56(84) bytes of data.
 ## ☀️ Déjà, prouvez que le routeur a un accès internet
 
 ```powershell
-[jawad@localhost ~]$ ping ynov.com
-PING ynov.com (104.26.10.233) 56(84) bytes of data.
+[jawad@localhost ~]$ ping www.ynov.com
+PING www.ynov.com (172.67.74.226) 56(84) bytes of data.
 64 bytes from 104.26.10.233 (104.26.10.233): icmp_seq=1 ttl=52 time=31.0 ms
 ...
 ```
@@ -248,30 +248,31 @@ ssh-mgmt        17235/udp               # SSH Tectia Manager
 
 ## ☀️ Installez et configurez un serveur DHCP sur la machine routeur.tp5.b1
 
+Les commandes utilisées :
+
 ```powershell
-[jawad@localhost ~]$ sudo dnf install dhcp-server
-Last metadata expiration check: 0:09:52 ago on Tue 15 Oct 2024 05:30:58 PM CEST.
-Package dhcp-server-12:4.4.2-19.b1.el9.x86_64 is already installed.
-Dependencies resolved.
-Nothing to do.
-Complete!
+sudo dnf install dhcp-server
+sudo nano /etc/dhcp/dhcpd.conf
+sudo systemctl start dhcpd
+sudo systemctl enable dhcpd
+sudo systemctl status dhcpd
 ```
 
+Le contenu du fichier de configuration :
+
 ```powershell
-sudo nano /etc/dhcp/dhcpd.conf
-
-#
-# DHCP Server Configuration file.
-#   see /usr/share/doc/dhcp-server/dhcpd.conf.example
-#   see dhcpd.conf(5) man page
-#
-option domain-name "tp5.b1";              
-option domain-name-servers 8.8.8.8;       
-
-subnet 10.5.1.0 netmask 255.255.255.0 {    
-    range 10.5.1.20 10.5.1.100;          
-    option routers 10.5.1.254;       
-    option subnet-mask 255.255.255.0;     
-    option broadcast-address 10.5.1.255;   
+subnet 10.5.1.0 netmask 255.255.255.0 {
+    range 10.5.1.137 10.5.1.237; 
+    option routers 10.5.1.254;  
+    option domain-name-servers 1.1.1.1;  
 }
+```
+
+## ☀️ Créez une nouvelle machine client client3.tp5.b1
+
+```powershell
+[jawad@localhost ~]$ ping www.ynov.com
+PING www.ynov.com (172.67.74.226) 56(84) bytes of data.
+64 bytes from 172.67.74.226 (172.67.74.226): icmp_seq=1 ttl=51 time=32.7 ms
+...
 ```
