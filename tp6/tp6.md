@@ -111,3 +111,38 @@ success
   background-attachment: fixed;
 ...
 ```
+
+## déterminer sur quel(s) port(s) écoute le service BIND9
+
+```powershell
+[jawad@dns ~]$ sudo ss -lnput | grep 53
+udp   UNCONN 0      0          10.6.2.12:53        0.0.0.0:*    users:(("named",pid=1908,fd=24))
+udp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:(("named",pid=1908,fd=21))
+udp   UNCONN 0      0              [::1]:53           [::]:*    users:(("named",pid=1908,fd=26))
+tcp   LISTEN 0      10         10.6.2.12:53        0.0.0.0:*    users:(("named",pid=1908,fd=25))
+tcp   LISTEN 0      4096       127.0.0.1:953       0.0.0.0:*    users:(("named",pid=1908,fd=28))
+tcp   LISTEN 0      10         127.0.0.1:53        0.0.0.0:*    users:(("named",pid=1908,fd=22))
+tcp   LISTEN 0      10             [::1]:53           [::]:*    users:(("named",pid=1908,fd=27))
+tcp   LISTEN 0      4096           [::1]:953          [::]:*    users:(("named",pid=1908,fd=29))
+```
+
+## Vous devriez pouvoir visiter http://web.tp6.b1 avec le navigateur, ça devrait fonctionner sans aucune autre action.
+
+```powershell
+[jawad@client2 ~]$ curl http://web.tp6.b1
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>HTTP Server Test Page powered by: Rocky Linux</title>
+    <style type="text/css">
+      /*<![CDATA[*/
+
+      html {
+        height: 100%;
+        width: 100%;
+      }
+        body {
+...
+```
